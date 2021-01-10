@@ -671,5 +671,44 @@
     <!-- demo build -->
     <script src="../dist/hls.js"></script>
     <script src="../dist/hls-demo.js"></script>
+    <script src="./simple-metrics.js"></script>
+    <script>
+      const hlsjsDefaults = {
+        debug: true,
+        enableWorker: true,
+        lowLatencyMode: true,
+        liveBackBufferLength: 60 * 1.5,
+      };
+      self.hls = new Hls(hlsjsDefaults);
+      self.hls.on(Hls.Events.ERROR, function (eventName, data) {
+        switch (data.details) {
+          case Hls.ErrorDetails.BUFFER_STALLED_ERROR:
+            log('[bs] buffer stall!');
+            break;
+        }
+      });
+
+      function handleVideoEvent(evt) {
+        log('[ve] ' + evt.type);
+      }
+      video.addEventListener('resize', handleVideoEvent);
+      video.addEventListener('seeking', handleVideoEvent);
+      video.addEventListener('seeked', handleVideoEvent);
+      video.addEventListener('pause', handleVideoEvent);
+      video.addEventListener('play', handleVideoEvent);
+      video.addEventListener('canplay', handleVideoEvent);
+      video.addEventListener('canplaythrough', handleVideoEvent);
+      video.addEventListener('ended', handleVideoEvent);
+      video.addEventListener('playing', handleVideoEvent);
+      video.addEventListener('error', handleVideoEvent);
+      video.addEventListener('loadedmetadata', handleVideoEvent);
+      video.addEventListener('loadeddata', handleVideoEvent);
+      video.addEventListener('durationchange', handleVideoEvent);
+
+      // start logging loop, default to 1s
+      self.setInterval(function () {
+        report();
+      }, 1000);
+    </script>
   </body>
 </html>
