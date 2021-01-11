@@ -17,11 +17,22 @@ function bw(raw) {
 
 function report(tee) {
   const brs = self.events.bitrate;
+  let sumBitrate;
+  let sumLevel, sumDuration;
+  sumBitrate = 0;
+  sumLevel = sumDuration = 0;
+  for (let i = 0; i < brs.length; i++) {
+    sumBitrate += brs[i].duration * brs[i].bitrate;
+    sumLevel += brs[i].duration * brs[i].level;
+    sumDuration += brs[i].duration;
+  }
+
   const r = {
     bitrate: brs[brs.length - 1].bitrate,
     level: self.hls.currentLevel,
+    avgBitrate: (sumBitrate / sumDuration).toFixed(2),
+    avgLevel: (sumLevel / sumDuration).toFixed(2),
     latency: self.hls.latency,
-    maxLatency: self.hls.maxLatency,
     targetLatency: self.hls.targetLatency,
     liveSyncPosition: self.hls.liveSyncPosition,
     'bw-est': bw(self.hls.bandwidthEstimate),

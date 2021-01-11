@@ -698,23 +698,6 @@
         appendTextEl('metricOut', m);
       };
 
-      const hlsjsDefaults = {
-        debug: true,
-        enableWorker: true,
-        lowLatencyMode: true,
-        liveBackBufferLength: 60 * 1.5,
-      };
-      self.hls = new Hls(hlsjsDefaults);
-
-      // self.hls.on(Hls.Events.ERROR, function (eventName, data) {
-      //   log('[error] ' + data.toString())
-      //   switch (data.details) {
-      //     case Hls.ErrorDetails.BUFFER_STALLED_ERROR:
-      //       log('[bs] buffer stall!', tee);
-      //       break;
-      //   }
-      // });  // log it in dist/hls-demo.js
-
       function handleVideoEvent(evt) {
         log('[ve] ' + evt.type, tee);
       }
