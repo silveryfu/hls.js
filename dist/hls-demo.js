@@ -109,6 +109,34 @@ return /******/ (function(modules) { // webpackBootstrap
 // ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
 
+function log(message, tee) {
+  const prefix = '[metrics]';
+  const ts = '[' + (new Date().getTime() / 1000).toString() + ']';
+  const newMessage = prefix + ' ' + ts + ' ' + message;
+
+  console.log(newMessage);
+  if (tee != null) {
+    tee(newMessage);
+  }
+}
+
+function appendTextEl(textElId, m) {
+  const el = $('#' + textElId);
+  let logText = el.text();
+  if (logText.length) {
+    logText += '\n';
+  }
+  logText += m;
+  // update
+  el.text(logText);
+  const element = el[0];
+  element.scrollTop = element.scrollHeight - element.clientHeight;
+}
+
+const tee = function (m) {
+  appendTextEl('metricOut', m);
+};
+
 // CONCATENATED MODULE: ./demo/demo-utils.js
 function sortObject(obj) {
   if (typeof obj !== 'object') {
@@ -1771,6 +1799,9 @@ function loadSelectedStream() {
   hls.on(Hls.Events.ERROR, function (eventName, data) {
     console.warn('Error event:', data);
 
+
+    log('[error] ' + JSON.stringify(data), tee)
+
     switch (data.details) {
       case Hls.ErrorDetails.MANIFEST_LOAD_ERROR:
         try {
@@ -1853,7 +1884,26 @@ function loadSelectedStream() {
         break;
 
       case Hls.ErrorDetails.BUFFER_STALLED_ERROR:
+        function appendTextEl(textElId, m) {
+          const el = $('#' + textElId);
+          let logText = el.text();
+          if (logText.length) {
+            logText += '\n';
+          }
+          logText += m;
+          // update
+          el.text(logText);
+          const element = el[0];
+          element.scrollTop = element.scrollHeight - element.clientHeight;
+        }
+
+        const tee = function (m) {
+          appendTextEl('metricOut', m);
+        };
+
+        log('[bs] buffer stall!', tee)
         logError('Buffer stalled error');
+
         break;
 
       default:
@@ -4273,7 +4323,7 @@ function getAlpha(string) {
 // generators
 function hexString(rgba, a) {
    var a = (a !== undefined && rgba.length === 3) ? a : rgba[3];
-   return "#" + hexDouble(rgba[0]) 
+   return "#" + hexDouble(rgba[0])
               + hexDouble(rgba[1])
               + hexDouble(rgba[2])
               + (

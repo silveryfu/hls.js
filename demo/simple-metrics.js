@@ -11,8 +11,8 @@ function log(message, tee) {
 
 function bw(raw) {
   const kb = 1 * 1000;
-  const mb = 1000 * kb;
-  return Math.round(raw / mb);
+  // const mb = 1000 * kb;
+  return (raw / kb).toFixed(2);
 }
 
 function report(tee) {
@@ -20,11 +20,11 @@ function report(tee) {
   const r = {
     bitrate: brs[brs.length - 1].bitrate,
     level: self.hls.currentLevel,
-    'bw-est': bw(self.hls.bandwidthEstimate),
     latency: self.hls.latency,
     maxLatency: self.hls.maxLatency,
     targetLatency: self.hls.targetLatency,
     liveSyncPosition: self.hls.liveSyncPosition,
+    'bw-est': bw(self.hls.bandwidthEstimate),
   };
   log(JSON.stringify(r), tee);
 }
