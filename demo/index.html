@@ -681,21 +681,6 @@
     <script src="../dist/hls-demo.js"></script>
     <script src="./simple-metrics.js"></script>
     <script>
-      const hlsjsDefaults = {
-        debug: true,
-        enableWorker: true,
-        lowLatencyMode: true,
-        liveBackBufferLength: 60 * 1.5,
-      };
-      self.hls = new Hls(hlsjsDefaults);
-      self.hls.on(Hls.Events.ERROR, function (eventName, data) {
-        switch (data.details) {
-          case Hls.ErrorDetails.BUFFER_STALLED_ERROR:
-            log('[bs] buffer stall!');
-            break;
-        }
-      });
-
       function appendTextEl(textElId, m) {
         const el = $('#' + textElId);
         let logText = el.text();
@@ -709,8 +694,28 @@
         element.scrollTop = element.scrollHeight - element.clientHeight;
       }
 
+      const tee = function (m) {
+        appendTextEl('metricOut', m);
+      };
+
+      const hlsjsDefaults = {
+        debug: true,
+        enableWorker: true,
+        lowLatencyMode: true,
+        liveBackBufferLength: 60 * 1.5,
+      };
+      self.hls = new Hls(hlsjsDefaults);
+
+      self.hls.on(Hls.Events.ERROR, function (eventName, data) {
+        switch (data.details) {
+          case Hls.ErrorDetails.BUFFER_STALLED_ERROR:
+            log('[bs] buffer stall!', tee);
+            break;
+        }
+      });
+
       function handleVideoEvent(evt) {
-        log('[ve] ' + evt.type);
+        log('[ve] ' + evt.type, tee);
       }
       video.addEventListener('resize', handleVideoEvent);
       video.addEventListener('seeking', handleVideoEvent);
@@ -728,9 +733,7 @@
 
       // start logging loop, default to 1s
       self.setInterval(function () {
-        report(function (m) {
-          appendTextEl('metricOut', m);
-        });
+        report(tee);
       }, 1000);
     </script>
   </body>
