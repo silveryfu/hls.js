@@ -168,6 +168,14 @@
       <label class="center">Error:</label>
       <pre id="errorOut" class="center" style="white-space: pre-wrap"></pre>
 
+      <label class="center">Metrics:</label>
+      <pre
+        id="metricOut"
+        class="center"
+        style="white-space: pre-wrap"
+        contenteditable="true"
+      ></pre>
+
       <div
         class="center"
         style="text-align: center; display: none"
@@ -688,6 +696,19 @@
         }
       });
 
+      function appendTextEl(textElId, m) {
+        const el = $('#' + textElId);
+        let logText = el.text();
+        if (logText.length) {
+          logText += '\n';
+        }
+        logText += m;
+        // update
+        el.text(logText);
+        const element = el[0];
+        element.scrollTop = element.scrollHeight - element.clientHeight;
+      }
+
       function handleVideoEvent(evt) {
         log('[ve] ' + evt.type);
       }
@@ -707,7 +728,9 @@
 
       // start logging loop, default to 1s
       self.setInterval(function () {
-        report();
+        report(function (m) {
+          appendTextEl('metricOut', m);
+        });
       }, 1000);
     </script>
   </body>

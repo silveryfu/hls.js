@@ -1,7 +1,12 @@
-function log(m) {
+function log(message, tee) {
   const prefix = '[metrics]';
   const ts = '[' + (new Date().getTime() / 1000).toString() + ']';
-  console.log(prefix + ' ' + ts + ' ' + m);
+  const newMessage = prefix + ' ' + ts + ' ' + message;
+
+  console.log(newMessage);
+  if (tee != null) {
+    tee(newMessage);
+  }
 }
 
 function bw(raw) {
@@ -10,7 +15,7 @@ function bw(raw) {
   return Math.round(raw / mb);
 }
 
-function report() {
+function report(tee) {
   const brs = self.events.bitrate;
   const r = {
     bitrate: brs[brs.length - 1].bitrate,
@@ -21,5 +26,5 @@ function report() {
     targetLatency: self.hls.targetLatency,
     liveSyncPosition: self.hls.liveSyncPosition,
   };
-  log(JSON.stringify(r));
+  log(JSON.stringify(r), tee);
 }
